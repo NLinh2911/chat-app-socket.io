@@ -1,0 +1,147 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Socket.IO chat</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font: 13px Helvetica, Arial;
+        }
+        #users_list {
+            font-size: 1.2em;
+            padding: 5px;
+            background-color: lightblue;
+            color: darkblue;
+            float: left;
+            width: 20%;
+            height: 100vh;
+            border-right: 3px solid #000;
+            padding:10px;
+            /*overflow:scroll;*/
+        }
+        #users_list div {
+            padding: 10px;
+        }
+        #chat_box{
+            float: left;
+            width: 80%;
+        }
+        form {
+            background: #000;
+            padding: 3px;
+            position: fixed;
+            bottom: 0;
+            width: 80%;
+        }
+        
+        form input {
+            border: 0;
+            padding: 10px;
+            width: 70%;
+            margin-right: .5%;
+        }
+        
+        form button {
+            width: 29%;
+            background: rgb(130, 224, 255);
+            border: none;
+            padding: 10px;
+        }
+        
+        #messages {
+            list-style-type: none;
+            padding: 10px;
+        }
+        
+        #messages li {
+            padding: 5px 10px;
+            border: 1px solid #757575;
+            border-radius: 3px;
+            margin: 5px 0;
+            overflow-wrap: break-word;
+        }
+        
+        #messages li:nth-child(odd) {
+            background: #eee;
+        }
+        
+        .username {
+            color: rgb(34, 165, 208);
+            /*padding: 10px;*/
+        }
+    </style>
+</head>
+
+<body>
+    <div id="users_list">
+        <b>USERS</b>
+        <div id="users"></div>
+    </div>
+    <div id="chat_box">
+        <ul id="messages"></ul>
+        <form action="">
+            <input type="text" name="message" id="m" autocomplete="off" /><button>Send</button>
+        </form>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+        $(function () {
+            // connect to socket.io
+            const socket = io();
+            // new client is requested to register an username
+            socket.on('connect', () => {
+                let username = prompt("What's your username?");
+                // send to server
+                socket.emit('new_client', username);
+                // display in browser's title and on pages
+                document.title = username + ' - ' + document.title;
+                $('#messages').append(`<li> You has joined the chat!</li>`);
+            });
+            //
+            socket.on('user_disconnect', (username) => {
+                $('#messages').append(`<li><em> ${username} </em> has left the chat!</li>`);
+            })
+            // display an announcement when a new user connects
+            socket.on('new_client', (username) => {
+                $('#messages').append(`<li><em> ${username} </em> has joined the chat!</li>`);
+            });
+            // listener, whenever the server emits 'update_users', this updates the username list
+            socket.on('update_users', (data) => {
+                $('#users').empty();
+                $.each(data, (key, value) => {
+                    $('#users').append('<div>' + key + '</div>');
+                });
+            });
+            // when the form is submitted, the message is sent to server
+            $('form').submit(() => {
+                let message = $('#m').val();
+                //let chatter = $('#name').val();
+                socket.emit('chat_message', message);
+                insertMsg("Me", message)
+                $('#m').val('').focus();
+                return false; // will not reload the page
+            });
+            // receive the data sent back from server and display on page
+            socket.on('chat_message', (data) => {
+                insertMsg(data.username, data.message);
+            });
+
+            // insert messages on pages
+            const insertMsg = (username, message) => {
+                $('#messages').append(`<li><strong class="username">${username}</strong> : ${message}</li>`);
+            }
+
+            //
+
+        });
+    </script>
+</body>
+
+</html>

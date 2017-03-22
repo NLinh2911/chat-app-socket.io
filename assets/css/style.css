@@ -1,0 +1,190 @@
+        
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+body {
+	font-family: monospace;
+	font-size: 1.5em;
+	font-weight: bold;
+}
+
+#main-content {
+	display: flex;
+	flex-flow: row wrap;
+	/* Sets the flex items to adjust to rows */
+	max-width: 1000px;
+	height: auto;
+	margin: 100px auto;
+	background-color: rgba(34, 88, 113, 0.53);
+	border-radius: 5px;
+}
+
+h1 {
+	order: 1;
+	text-transform: uppercase;
+	margin: auto;
+	margin-top: 20px;
+    text-decoration: underline;
+}
+
+a {
+	color: #9e9e9e; 
+}
+
+input {
+	width: 70%;
+	padding: 10px;
+	/*margin: 10px;*/
+}
+
+button {
+	width: 100px;
+	padding: 10px;
+	margin: 10px;
+	/*background-color: #9E9E9E;*/
+	color: #fff;
+	text-transform: uppercase;
+	font-weight: bold;
+}
+p {
+	color: #fff;
+	padding: 20px;
+}
+
+#set_username {
+	order: 2;
+	flex: 0 1 100%;
+	background-color: rgb(138, 166, 180);;
+	margin: 10px;
+	border-radius: 5px;
+	text-align: center;
+	display: flex;
+}
+
+#set_username form {
+	flex: 1 1 60%;
+	outline: none;
+}
+
+#set_username input {
+	width: 30%;
+	outline: none;
+	border: none;
+	background-color: rgb(138, 166, 180);;
+	border-bottom: 3px solid #898989;
+	transition: all 0.5s linear; 
+}
+
+#set_username input:focus {
+	width: 50%;
+}
+#set_username button {
+	background-color: rgb(138, 166, 180);;
+}
+
+#list_container {
+	order: 3;
+	flex: 1 1 30%;
+	display: flex;
+	margin: 10px;
+}
+
+.info_list {
+	flex: 1 1 100%;
+	background-color: #001323;
+	border-right: 2px solid #898989;
+	/*margin: 10px;*/
+}
+
+#rooms_list div, #users_list div, #online_list div {
+	padding: 10px;
+	text-align: center;
+	color: #9e9e9e;         
+}
+
+#rooms_list > div {
+	display: flex;
+	flex-flow: row wrap;
+} 
+
+#rooms_list div {
+	flex: 1 1 50%;
+	text-transform: uppercase;
+}
+
+#rooms_list button {
+	padding: 4px;
+	background-color: #001323;
+}
+
+#users_list > div p, #online_list > div p {
+	padding: 2px;
+}
+
+#chat_box {
+	order: 4;
+	flex: 1 1 100%;
+	background-color: #1E1E1E;
+	padding: 10px;
+	border-radius: 5px;
+	margin: 0 10px 10px 10px;
+	overflow-y: scroll;
+	max-height: 400px;
+}
+
+#msg_form {
+	clear: both;
+}
+
+#msg_form input {
+	width: 80%;
+	margin-left: 5%;
+
+}
+
+#msg_form button {
+	background-color: #1E1E1E;
+}
+
+#messages {
+	list-style-type: none;
+	padding: 10px;
+}
+
+#messages li {
+	padding: 5px 10px;
+	border: 1px solid #757575;
+	border-radius: 3px;
+	margin: 5px 0;
+	overflow-wrap: break-word;
+	word-break: break-word;
+	float: left;
+	clear: both;
+}
+
+#messages .own_msg {
+	float: right;
+	background: #eee;
+}
+
+.other_msg {
+	background: #607D8B;
+}
+
+.private_msg {
+	color: #FBC02D;
+}
+
+.username {
+	color: rgb(30, 30, 30);
+	/*padding: 10px;*/
+}
+
+.notif {
+	color: #FBC02D;
+	/*font-size: 1.1em;*/
+}
+
+

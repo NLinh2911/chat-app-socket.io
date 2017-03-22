@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <title>Socket.IO chat</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font: 13px Helvetica, Arial;
+        }
+        
+        .info_list {
+            font-size: 1.2em;
+            float: left;
+            width: 20%;
+            height: 100vh;
+            border-right: 3px solid #000;
+            padding: 10px;
+            color: darkblue;
+        }
+        
+        #rooms_list {
+            background-color: snow;
+        }
+        
+        #rooms_list div {
+            padding: 10px;
+            text-transform: uppercase;
+        }
+        
+        #rooms_list a {
+            padding: 3px 5px;
+            transition: all .4s linear;
+            display: inline-block;
+            background-color: lightsteelblue;
+            color: black;
+            text-decoration: none;
+        }
+        
+        #rooms_list a:hover {
+            text-decoration: underline;
+            transform: scale(1.5);
+        }
+        
+        #users_list {
+            background-color: lightblue;
+        }
+        
+        #users_list div {
+            padding: 10px;
+        }
+        
+        section {
+            float: left;
+            width: 60%;
+        }
+        
+        form {
+            background: #000;
+            padding: 3px;
+            width: 60%;
+        }
+        #usr_form {
+            position: fixed;
+            top: 5%;
+        }
+        
+        #msg_form {
+            position: fixed;
+            bottom: 0;
+        }
+        
+        form input {
+            border: 0;
+            padding: 10px;
+            width: 70%;
+            margin-right: .5%;
+        }
+        
+        form button {
+            width: 29%;
+            background: lightblue;
+            border: none;
+            padding: 10px;
+        }
+        #set_username p {
+            text-align: center;
+            padding-top: 5px;
+            font-size: 1.2em;
+            font-weight: 700;
+            
+        }
+        #messages {
+            margin-top: 5%;
+            list-style-type: none;
+            padding: 10px;
+        }
+        
+        #messages li {
+            padding: 5px 10px;
+            border: 1px solid #757575;
+            border-radius: 3px;
+            margin: 5px 0;
+            overflow-wrap: break-word;
+        }
+        
+        #messages li:nth-child(odd) {
+            background: #eee;
+        }
+        
+        .username {
+            color: rgb(34, 165, 208);
+            /*padding: 10px;*/
+        }
+        
+        .notif {
+            color: orangered;
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="info_list" id="rooms_list">
+        <b>ROOMS</b>
+        <div id="rooms"></div>
+    </div>
+    <div class="info_list" id="users_list">
+        <b>USERS</b>
+        <div id="users"></div>
+    </div>
+    <section>
+        <!--<div id="set_username">
+            <p>Choose your username</p>
+            <form id="usr_form" action="">
+                <input type="text" name="username" id="usr" autocomplete="off" /><button>Send</button>
+            </form>
+        </div>-->
+        <div id="chat_box">
+            <ul id="messages"></ul>
+            <form id="msg_form" action="">
+                <input type="text" name="message" id="msg" autocomplete="off" /><button>Send</button>
+            </form>
+        </div>
+    </section>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script>
+        $(function () {
+
+            // connect to socket.io
+            const socket = io();
+            // new client is requested to register an username
+            socket.on('connect', () => {
+                alert('Welcome to the main chat room!!!')
+                let username = prompt("What's your username?");
+                // send to server
+                socket.emit('new_client', username);
+                // display in browser's title and on pages
+                document.title = username + ' - ' + document.title;
+            });
+            // client sends an username to server
+            // $('#usr_form').submit(() => {
+            //     let username = $('#usr').val();
+            //     // send to server
+            //     socket.emit('new_client', username);
+            //     // display in browser's title and on pages
+            //     document.title = username + ' - ' + document.title;
+            //     $('#usr').val('');
+            //     return false;
+            // });
+            // display an announcement when a new user connects
+            socket.on('new_client', (data) => {
+                $('#messages').append(`<li class="notif"><em> ${data.username} </em> has joined the chat in ${data.room} !!!</li>`);
+            });
+            // alert when a duplicated username is chosen 
+            socket.on('duplicate_username', (msg) => {
+                alert(msg);
+            });
+            socket.on('change_username', (data) => {
+                $('#messages').append(`<li>${data.oldName} changes the username to ${data.newName} </li>`)
+            });
+            // display an announcement when a new user disconnects from a room
+            socket.on('user_disconnect', (data) => {
+                $('#messages').append(`<li class="notif"><em> ${data.username} </em> has left ${data.room}!</li>`);
+            })
+
+            // listener, whenever the server emits 'update_users', this updates the username list
+            socket.on('update_users', (data) => {
+                $('#users').empty();
+                $.each(data, (key, value) => {
+                    $('#users').append(`<div>${value}</div>`);
+                });
+            });
+            // listener, whenever the server emits 'updaterooms', this updates the room the client is in
+            socket.on('update_rooms', (rooms, current_room) => {
+                $('#rooms').empty();
+                $.each(rooms, (key, value) => {
+                    if (value == current_room) {
+                        $('#rooms').append('<div>' + value + '</div>');
+                    }
+                    else {
+                        $('#rooms').append(`<div><a href="#" id="${value}">${value}</a></div>`);
+                        $('#' + value).click(() => {
+                            let room = `${value}`;
+                            switchRoom(room);
+                        });
+                    }
+                });
+            });
+            const switchRoom = (room) => {
+                socket.emit('switch_rooms', room);
+            }
+            // a new msg is sent to server
+            $('#msg_form').submit(() => {
+                let message = $('#msg').val();
+                socket.emit('chat_message', message);
+                insertMsg("Me", message)
+                $('#msg').val('').focus();
+                return false; // will not reload the page
+            });
+            // receive the data sent back from server and display on page
+            socket.on('chat_message', (data) => {
+                insertMsg(data.username, data.message);
+            });
+
+            // insert messages on pages
+            const insertMsg = (username, message) => {
+                $('#messages').append(`<li><strong class="username">${username}</strong> : ${message}</li>`);
+            }
+
+            //
+
+        });
+    </script>
+</body>
+
+</html>

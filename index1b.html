@@ -1,0 +1,39 @@
+<html>
+
+<body>
+	<div>
+		<div id="notif">
+			<h1>Notifications</h1>
+		</div>
+		<input id="username" style="width:200px;" />
+		<input type="button" id="datasend" value="send" />
+	</div>
+
+
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<script>
+		const chat2 = io('/chat2');
+		chat2.on('connect', () => {
+			alert('Welcome to chat2 nsp');
+		});
+		$('#datasend').click(() => {
+			let username = $('#username').val();
+			chat2.emit('new_users', username);
+			$('#username').val('').focus();
+			return false;
+		});
+		chat2.on('duplicate_username', (msg) => {
+			alert(msg);
+		});
+		chat2.on('new_users', (username) => {
+			$('#notif').append(`<p>${username} joined chat 2 nsp </p>`)
+		});
+		chat2.on('change_username', (data) => {
+			$('#notif').append(`<p>${data.oldName} changes the username to ${data.newName} </p>`)
+		});
+
+	</script>
+</body>
+
+</html>

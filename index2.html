@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <title>Socket.IO chat</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body>
+    <div id="main-content">
+        <h1>Socket IO chat room</h1>
+        <div id="set_username">
+            <p>Choose your username</p>
+            <form id="usr_form" action="">
+                <input type="text" name="username" id="usr" autocomplete="off" /><button>Register</button>
+            </form>
+        </div>
+        <div id="list_container">
+        <div class="info_list" id="rooms_list">
+            <p>ROOMS LIST </p> 
+            <!--<button id="create_room">CREATE</button> -->
+            
+            <div id="rooms"></div>
+        </div>
+        <div class="info_list" id="users_list">
+            <p>ROOM USERS </p>
+            <div id="users"></div>
+        </div>
+        <div class="info_list" id="online_list">
+            <p>ALL ONLINE USERS</p>
+            <div id="online_users"></div>
+        </div>
+        </div>
+        <div id="chat_box">
+            <p>This is where chat messages go.</p>
+            <ul id="messages"></ul>
+            <form id="msg_form" action="">
+                <input type="text" placeholder="Type here...." name="message" id="msg" autocomplete="off" /><button>Send</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="assets/js/client.js"></script>
+</body>
+
+</html>
