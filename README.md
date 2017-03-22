@@ -1,17 +1,19 @@
 # CHAT APPLICATION WITH SOCKET.IO
 
-### TODO: prevent spams, display 'is typing', fix word-wrap
 ## DIFFERENT VERSIONS:
 1. Simple chat with user list: 
 ```js
+    npm i
     node app.js
 ```
 2. Chat has 3 rooms and user list:
 ```js
+    npm i
     node app1.js
 ```
 3. Chat app has full functionalities as below and can connect to another namespace (localhost:3000/chat2)
 ```js
+    npm i
     node app2.js
 ```
 
